@@ -35,7 +35,7 @@ public class UsuarioController {
         usuario.setContraseña(request.getContrasena());
         usuario.setRol(Rol.USER);
 
-       Usuario usuarioGuardado = usuarioService.guardar(usuario);
+       Usuario usuarioGuardado = usuarioService.registrar(usuario);
 
        UsuarioResponse response = new UsuarioResponse(
             usuarioGuardado.getId(),
@@ -83,9 +83,5 @@ public class UsuarioController {
         usuarioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
 
 }

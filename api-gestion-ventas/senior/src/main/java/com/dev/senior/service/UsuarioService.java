@@ -6,14 +6,28 @@ import com.dev.senior.model.*;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service 
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository){
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder){
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public Usuario registrar(Usuario usuario){
+        if(usuarioRepository.existsByCorreo(usuario.getCorreo())){
+            throw new IllegalArgumentException("Ya existe un usuario con ese correo");
+        }
+        usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+        usuario.setRol(Rol.USER);
+
+        return usuarioRepository.save(usuario);
+
     }
 
     public Usuario guardar(Usuario usuario){

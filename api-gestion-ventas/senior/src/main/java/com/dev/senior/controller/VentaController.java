@@ -48,9 +48,31 @@ public ResponseEntity<List<VentaResponse>> listar() {
     return ResponseEntity.ok(ventas);
 }
 
+    
     @GetMapping("/{id}")
     public ResponseEntity<VentaResponse> buscarPorId(@PathVariable Long id){
-        
-    }
+        return ventaService.buscarPorId(id)
+                    .map(venta -> {
+
+                        VentaResponse response = new VentaResponse(
+                            venta.getId(),
+                            venta.getUsuario().getId(),
+                            venta.getFecha(),
+                            venta.getTotal(),
+                            venta.getDetalles().stream()
+                            .map(detalle -> new com.dev.senior.dto.DetalleVentaResponse(
+                                    detalle.getProducto().getId(),
+                                    detalle.getProducto().getNombre(),
+                                    detalle.getCantidad(),
+                                    detalle.getPrecioUnitario(),
+                                    detalle.getPrecioUnitario()
+                                            .multiply(java.math.BigDecimal.valueOf(detalle.getCantidad()))
+                            ))
+                            .toList()
+                        );
+                        return ResponseEntity.ok(response);
+                    })
+    .orElse(ResponseEntity.notFound().build());    
+        }
 
 }
